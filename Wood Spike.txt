@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wood Spike 🏐</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f9f8f6;color:#1a1a18;padding:1.5rem;max-width:860px;margin:0 auto}
+:root{
+  --color-text-primary:#1a1a18;
+  --color-text-secondary:#5f5e5a;
+  --color-text-tertiary:#888780;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f1efe8;
+  --color-border-tertiary:rgba(0,0,0,0.15);
+  --color-border-secondary:rgba(0,0,0,0.3);
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  body{background:#1a1a18;color:#f1efe8}
+  :root{
+    --color-text-primary:#f1efe8;
+    --color-text-secondary:#b4b2a9;
+    --color-text-tertiary:#888780;
+    --color-background-primary:#2c2c2a;
+    --color-background-secondary:#3a3a38;
+    --color-border-tertiary:rgba(255,255,255,0.15);
+    --color-border-secondary:rgba(255,255,255,0.3);
+  }
+}
+.hdr{display:flex;align-items:center;gap:12px;padding:1.5rem 0 1rem}
+.logo{width:44px;height:44px;border-radius:10px;background:#D85A30;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr-text h1{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1.1}
+.hdr-text p{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.week-nav{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.week-nav button{background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer;color:var(--color-text-primary);font-size:13px}
+.week-nav button:hover{background:var(--color-background-secondary)}
+.week-label{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1;text-align:center}
+.grid{display:grid;grid-template-columns:52px repeat(7,1fr);gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;user-select:none}
+.day-hdr{padding:8px 4px;text-align:center;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);border-right:0.5px solid var(--color-border-tertiary)}
+.day-hdr:last-child{border-right:none}
+.day-hdr .dow{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em}
+.day-hdr .date{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.day-hdr.today .date{color:#D85A30}
+.corner{background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);border-right:0.5px solid var(--color-border-tertiary)}
+.time-cell{padding:0 6px;display:flex;align-items:center;justify-content:flex-end;font-size:11px;color:var(--color-text-tertiary);height:40px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.slot{height:40px;cursor:pointer;position:relative;border-right:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);transition:background .05s}
+.slot.free{background:var(--color-background-primary)}
+.slot.free:hover,.slot.free.drag-hover{background:#F0997B44}
+.slot.busy{background:#FAECE7;cursor:not-allowed}
+.slot.selected{background:#D85A30}
+.slot.selected:hover{background:#993C1D}
+.slot.locked{background:#993C1D;cursor:not-allowed}
+.slot-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none;padding:0 2px;text-align:center;line-height:1.2}
+.busy .slot-label{color:#993C1D}
+.locked .slot-label{color:#F5C4B3}
+.selected .slot-label{color:white}
+.cnt-badge{position:absolute;top:3px;right:4px;font-size:10px;pointer-events:none}
+.players{margin:1.5rem 0 1rem}
+.players h2{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
+.player-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.player-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;display:flex;align-items:center;gap:10px;background:var(--color-background-primary)}
+.player-card.me{border-color:#D85A30;background:#FAECE7}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.player-info .name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.player-info .slots-count{font-size:11px;color:var(--color-text-secondary)}
+.add-player{border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 12px;display:flex;align-items:center;gap:10px;background:none;cursor:pointer;color:var(--color-text-secondary);font-size:13px;width:100%;text-align:left}
+.add-player:hover{background:var(--color-background-secondary)}
+.status-bar{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin:1rem 0;background:var(--color-background-secondary)}
+.status-bar h2{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.match-slot{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:0.5px solid var(--color-border-tertiary)}
+.match-slot:first-of-type{border-top:none}
+.match-info .time{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.match-info .who{font-size:12px;color:var(--color-text-secondary)}
+.match-pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.pill-4{background:#EAF3DE;color:#3B6D11}
+.pill-3{background:#FAEEDA;color:#854F0B}
+.pill-low{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.nag-btn{margin-top:.75rem;background:#D85A30;color:white;border:none;border-radius:var(--border-radius-md);padding:8px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nag-btn:hover{background:#993C1D}
+.copied{background:#3B6D11 !important}
+.legend{display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+.legend-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+.switch-row{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.switch-btn{border:0.5px solid var(--color-border-secondary);border-radius:20px;padding:4px 14px;font-size:12px;cursor:pointer;background:none;color:var(--color-text-secondary)}
+.switch-btn.active{background:#D85A30;border-color:#D85A30;color:white}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.75rem}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);align-items:center;justify-content:center;z-index:100}
+.modal-bg.open{display:flex}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.5rem;width:300px;border:0.5px solid var(--color-border-tertiary)}
+.modal h2{font-size:16px;font-weight:500;margin-bottom:1rem;color:var(--color-text-primary)}
+.modal input{width:100%;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);margin-bottom:.75rem}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-btns button{padding:7px 16px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer}
+.btn-cancel{background:none;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.btn-add{background:#D85A30;border:none;color:white}
+.empty-state{padding:.5rem 0;color:var(--color-text-secondary);font-size:13px}
+</style>
+</head>
+<body>
+
+<h1 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Wood Spike — SpikeBall scheduling app for 4 players</h1>
+
+<div class="hdr">
+  <div class="logo" aria-hidden="true">🏐</div>
+  <div class="hdr-text">
+    <h1>Wood Spike</h1>
+    <p>Find when all 4 of you can play</p>
+  </div>
+</div>
+
+<div class="switch-row">
+  <span style="font-size:12px;color:var(--color-text-secondary)">Viewing as:</span>
+  <button class="switch-btn active" id="btn-0" onclick="switchPlayer(0)">Player 1</button>
+  <button class="switch-btn" id="btn-1" onclick="switchPlayer(1)">Player 2</button>
+  <button class="switch-btn" id="btn-2" onclick="switchPlayer(2)">Player 3</button>
+  <button class="switch-btn" id="btn-3" onclick="switchPlayer(3)">Player 4</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#D85A30"></div>Your pick</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FAECE7;border:0.5px solid #F5C4B3"></div>Busy</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#993C1D"></div>Locked in (4/4)</div>
+</div>
+
+<p class="hint"><i class="ti ti-mouse" aria-hidden="true"></i> Click or click-and-drag to mark availability</p>
+
+<div class="week-nav">
+  <button onclick="shiftWeek(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+  <span class="week-label" id="week-label"></span>
+  <button onclick="shiftWeek(1)"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="players">
+  <h2>Players</h2>
+  <div class="player-grid" id="player-grid"></div>
+</div>
+
+<div class="status-bar">
+  <h2>Best times this week</h2>
+  <div id="matches"></div>
+  <button class="nag-btn" id="nag-btn" onclick="copyNag()"><i class="ti ti-send" aria-hidden="true"></i> Copy nag message</button>
+</div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2>Add a player</h2>
+    <input type="text" id="new-name" placeholder="Name" maxlength="20" />
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-add" onclick="confirmAdd()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const HOURS = [10,11,12,13,14,15,16,17];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const COLORS = ['#B5D4F4','#9FE1CB','#FAC775','#F4C0D1'];
+const TEXT_COLORS = ['#0C447C','#085041','#633806','#72243E'];
+
+let weekOffset = 0;
+let currentPlayerIdx = 0;
+let dragState = null;
+
+let players = [
+  {name:'Player 1', color:COLORS[0], textColor:TEXT_COLORS[0], selections:{}, busy:{}},
+  {name:'Player 2', color:COLORS[1], textColor:TEXT_COLORS[1], selections:{}, busy:{}},
+  {name:'Player 3', color:COLORS[2], textColor:TEXT_COLORS[2], selections:{}, busy:{}},
+  {name:'Player 4', color:COLORS[3], textColor:TEXT_COLORS[3], selections:{}, busy:{}}
+];
+
+function getWeekStart(){
+  const d=new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-d.getDay()+weekOffset*7);
+  return d;
+}
+
+function slotKey(d,h){ return d+'_'+h; }
+
+function isPlayerBusy(pi,d,h){
+  const ranges=(players[pi].busy[d])||[];
+  return ranges.some(([s,e])=>h>=s&&h<e);
+}
+
+function countPlayers(d,h){
+  const key=slotKey(d,h);
+  return players.filter(p=>p.selections[key]).length;
+}
+
+function isLocked(d,h){ return countPlayers(d,h)>=4; }
+
+function canToggle(pi,d,h){
+  if(isPlayerBusy(pi,d,h)) return false;
+  const key=slotKey(d,h);
+  if(isLocked(d,h)&&!players[pi].selections[key]) return false;
+  return true;
+}
+
+function setSlot(pi,d,h,val){
+  if(!canToggle(pi,d,h)) return;
+  const key=slotKey(d,h);
+  if(val) players[pi].selections[key]=true;
+  else delete players[pi].selections[key];
+}
+
+function render(){
+  const ws=getWeekStart();
+  const we=new Date(ws); we.setDate(we.getDate()+6);
+  document.getElementById('week-label').textContent=
+    ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
+    we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  const today=new Date(); today.setHours(0,0,0,0);
+  const g=document.getElementById('grid'); g.innerHTML='';
+
+  const corner=document.createElement('div'); corner.className='corner'; g.appendChild(corner);
+
+  for(let d=0;d<7;d++){
+    const dt=new Date(ws); dt.setDate(dt.getDate()+d);
+    const isToday=dt.getTime()===today.getTime();
+    const hdr=document.createElement('div');
+    hdr.className='day-hdr'+(isToday?' today':'');
+    hdr.innerHTML=`<div class="dow">${DAYS[d]}</div><div class="date">${dt.getDate()}</div>`;
+    g.appendChild(hdr);
+  }
+
+  HOURS.forEach(hour=>{
+    const tc=document.createElement('div'); tc.className='time-cell';
+    tc.textContent=hour===12?'12p':hour<12?hour+'a':(hour-12)+'p';
+    g.appendChild(tc);
+
+    for(let d=0;d<7;d++){
+      const key=slotKey(d,hour);
+      const busy=isPlayerBusy(currentPlayerIdx,d,hour);
+      const locked=isLocked(d,hour);
+      const selected=!!players[currentPlayerIdx].selections[key];
+      const cnt=countPlayers(d,hour);
+
+      const slot=document.createElement('div');
+      slot.className='slot '+(locked&&!selected?'locked':busy?'busy':selected?'selected':'free');
+      slot.dataset.day=d; slot.dataset.hour=hour;
+
+      if(busy){
+        const lbl=document.createElement('div'); lbl.className='slot-label'; lbl.textContent='busy'; slot.appendChild(lbl);
+      } else if(locked&&!selected){
+        const lbl=document.createElement('div'); lbl.className='slot-label';
+        lbl.innerHTML='<i class="ti ti-bolt" aria-hidden="true"></i>'; slot.appendChild(lbl);
+      } else if(selected){
+        const ic=document.createElement('div'); ic.className='slot-label';
+        ic.innerHTML='<i class="ti ti-check" aria-hidden="true"></i>'; slot.appendChild(ic);
+      }
+
+      if(cnt>0&&!locked&&!selected){
+        const badge=document.createElement('div'); badge.className='cnt-badge';
+        badge.style.color=cnt>=3?'#D85A30':'var(--color-text-tertiary)';
+        badge.textContent=cnt+'✓'; slot.appendChild(badge);
+      }
+
+      g.appendChild(slot);
+    }
+  });
+
+  attachDragListeners();
+  renderPlayers();
+  renderMatches();
+}
+
+function attachDragListeners(){
+  const g=document.getElementById('grid');
+
+  function slotFromEl(el){
+    const s=el&&el.closest&&el.closest('.slot');
+    if(!s) return null;
+    return {el:s,day:+s.dataset.day,hour:+s.dataset.hour};
+  }
+
+  function startDrag(e,slot){
+    if(!slot) return;
+    if(isPlayerBusy(currentPlayerIdx,slot.day,slot.hour)) return;
+    const key=slotKey(slot.day,slot.hour);
+    const wasSelected=!!players[currentPlayerIdx].selections[key];
+    dragState={painting:!wasSelected};
+    setSlot(currentPlayerIdx,slot.day,slot.hour,dragState.painting);
+    render();
+  }
+
+  function duringDrag(e){
+    if(!dragState) return;
+    let el;
+    if(e.touches){ const t=e.touches[0]; el=document.elementFromPoint(t.clientX,t.clientY); e.preventDefault(); }
+    else { el=e.target; }
+    const slot=slotFromEl(el); if(!slot) return;
+    const key=slotKey(slot.day,slot.hour);
+    const cur=!!players[currentPlayerIdx].selections[key];
+    if(cur===dragState.painting) return;
+    setSlot(currentPlayerIdx,slot.day,slot.hour,dragState.painting);
+    render();
+  }
+
+  function endDrag(){ dragState=null; }
+
+  g.addEventListener('mousedown',e=>{ if(e.button!==0) return; startDrag(e,slotFromEl(e.target)); });
+  g.addEventListener('mouseover',duringDrag);
+  g.addEventListener('mouseup',endDrag);
+  g.addEventListener('mouseleave',endDrag);
+  g.addEventListener('touchstart',e=>{ const t=e.touches[0]; startDrag(e,slotFromEl(document.elementFromPoint(t.clientX,t.clientY))); },{passive:false});
+  g.addEventListener('touchmove',duringDrag,{passive:false});
+  g.addEventListener('touchend',endDrag);
+}
+
+function renderPlayers(){
+  const pg=document.getElementById('player-grid'); pg.innerHTML='';
+  players.forEach((p,i)=>{
+    const cnt=Object.keys(p.selections).length;
+    const card=document.createElement('div');
+    card.className='player-card'+(i===currentPlayerIdx?' me':'');
+    card.innerHTML=`<div class="avatar" style="background:${p.color};color:${p.textColor}">${p.name.charAt(0)}</div>
+      <div class="player-info"><div class="name">${p.name}</div><div class="slots-count">${cnt} slot${cnt!==1?'s':''} picked</div></div>`;
+    pg.appendChild(card);
+  });
+}
+
+function renderMatches(){
+  const ws=getWeekStart();
+  const m=document.getElementById('matches');
+  const all=[];
+  for(let d=0;d<7;d++) HOURS.forEach(h=>{
+    const cnt=countPlayers(d,h);
+    if(cnt>=2){
+      const dt=new Date(ws); dt.setDate(dt.getDate()+d);
+      const label=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      const timeStr=h===12?'12:00 pm':h<12?`${h}:00 am`:`${h-12}:00 pm`;
+      const who=players.filter(p=>p.selections[slotKey(d,h)]).map(p=>p.name).join(', ');
+      all.push({label,timeStr,cnt,who,sort:cnt>=4?0:cnt===3?1:2});
+    }
+  });
+  all.sort((a,b)=>a.sort-b.sort);
+  if(!all.length){ m.innerHTML='<div class="empty-state">No overlaps yet — get your crew to pick their slots!</div>'; return; }
+  m.innerHTML=all.slice(0,6).map(e=>`<div class="match-slot">
+    <div class="match-info"><div class="time">${e.label} · ${e.timeStr}</div><div class="who">${e.who}</div></div>
+    <span class="match-pill ${e.cnt>=4?'pill-4':e.cnt===3?'pill-3':'pill-low'}">${e.cnt}/4</span>
+  </div>`).join('');
+}
+
+function switchPlayer(idx){
+  currentPlayerIdx=idx;
+  for(let i=0;i<4;i++) document.getElementById('btn-'+i).classList.toggle('active',i===idx);
+  render();
+}
+
+function shiftWeek(n){ weekOffset+=n; render(); }
+
+function openModal(){ document.getElementById('modal').classList.add('open'); document.getElementById('new-name').focus(); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); document.getElementById('new-name').value=''; }
+function confirmAdd(){
+  const name=document.getElementById('new-name').value.trim(); if(!name) return;
+  players[currentPlayerIdx].name=name;
+  document.getElementById('btn-'+currentPlayerIdx).textContent=name;
+  closeModal(); render();
+}
+
+function copyNag(){
+  const ws=getWeekStart();
+  const slots3=[];
+  for(let d=0;d<7;d++) HOURS.forEach(h=>{ if(countPlayers(d,h)===3){ const dt=new Date(ws); dt.setDate(dt.getDate()+d); slots3.push(dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' at '+(h===12?'12:00 pm':h<12?`${h}:00 am`:`${h-12}:00 pm`)); } });
+  const msg=slots3.length>0
+    ?`YO we have 3/4 confirmed for SpikeBall on Wood Spike — we just need ONE more to lock it in! 🏐\n\nTimes that work for 3 of us:\n${slots3.slice(0,3).map(s=>'• '+s).join('\n')}\n\nPick your slots or you're carrying the net: [your Wood Spike link]`
+    :`SPIKEBALL SCHEDULING IS HAPPENING AND YOU NEED TO PARTICIPATE 🏐\n\nI built an entire app called Wood Spike because our group chat is a disaster.\n\nTakes 30 seconds. Click your free times. Do it:\n[your Wood Spike link]\n\nYou have 24 hours before I make unilateral decisions.`;
+  navigator.clipboard.writeText(msg).then(()=>{
+    const btn=document.getElementById('nag-btn');
+    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Copy nag message'; btn.classList.remove('copied'); },2000);
+  }).catch(()=>alert(msg));
+}
+
+render();
+document.addEventListener('mouseup',()=>{ dragState=null; });
+document.getElementById('new-name').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAdd(); if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>

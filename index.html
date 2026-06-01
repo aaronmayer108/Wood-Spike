@@ -35,6 +35,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .logo{width:44px;height:44px;border-radius:10px;background:#D85A30;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .hdr-text h1{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1.1}
 .hdr-text p{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#888;margin-left:6px;vertical-align:middle;transition:background .3s}
+.sync-dot.synced{background:#3B6D11}
+.sync-dot.syncing{background:#BA7517}
 .week-nav{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
 .week-nav button{background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer;color:var(--color-text-primary);font-size:13px}
 .week-nav button:hover{background:var(--color-background-secondary)}
@@ -49,16 +52,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .time-cell{padding:0 6px;display:flex;align-items:center;justify-content:flex-end;font-size:11px;color:var(--color-text-tertiary);height:40px;background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary)}
 .slot{height:40px;cursor:pointer;position:relative;border-right:0.5px solid var(--color-border-tertiary);border-bottom:0.5px solid var(--color-border-tertiary);transition:background .05s}
 .slot.free{background:var(--color-background-primary)}
-.slot.free:hover,.slot.free.drag-hover{background:#F0997B44}
-.slot.busy{background:#FAECE7;cursor:not-allowed}
+.slot.free:hover{background:#F0997B44}
 .slot.selected{background:#D85A30}
 .slot.selected:hover{background:#993C1D}
 .slot.locked{background:#993C1D;cursor:not-allowed}
 .slot-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;pointer-events:none;padding:0 2px;text-align:center;line-height:1.2}
-.busy .slot-label{color:#993C1D}
 .locked .slot-label{color:#F5C4B3}
 .selected .slot-label{color:white}
 .cnt-badge{position:absolute;top:3px;right:4px;font-size:10px;pointer-events:none}
+.name-prompt{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.name-prompt p{font-size:13px;color:var(--color-text-secondary);flex:1;min-width:160px}
+.name-prompt input{padding:7px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);width:160px}
+.name-prompt button{background:#D85A30;color:white;border:none;border-radius:var(--border-radius-md);padding:7px 16px;font-size:13px;cursor:pointer;white-space:nowrap}
+.name-prompt button:hover{background:#993C1D}
 .players{margin:1.5rem 0 1rem}
 .players h2{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
 .player-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
@@ -67,8 +73,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
 .player-info .name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
 .player-info .slots-count{font-size:11px;color:var(--color-text-secondary)}
-.add-player{border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 12px;display:flex;align-items:center;gap:10px;background:none;cursor:pointer;color:var(--color-text-secondary);font-size:13px;width:100%;text-align:left}
-.add-player:hover{background:var(--color-background-secondary)}
 .status-bar{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin:1rem 0;background:var(--color-background-secondary)}
 .status-bar h2{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
 .match-slot{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:0.5px solid var(--color-border-tertiary)}
@@ -81,100 +85,96 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pill-low{background:var(--color-background-secondary);color:var(--color-text-secondary)}
 .nag-btn{margin-top:.75rem;background:#D85A30;color:white;border:none;border-radius:var(--border-radius-md);padding:8px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px}
 .nag-btn:hover{background:#993C1D}
-.copied{background:#3B6D11 !important}
+.nag-btn.copied{background:#3B6D11}
 .legend{display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
 .legend-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
-.switch-row{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
-.switch-btn{border:0.5px solid var(--color-border-secondary);border-radius:20px;padding:4px 14px;font-size:12px;cursor:pointer;background:none;color:var(--color-text-secondary)}
-.switch-btn.active{background:#D85A30;border-color:#D85A30;color:white}
 .hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.75rem}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);align-items:center;justify-content:center;z-index:100}
-.modal-bg.open{display:flex}
-.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1.5rem;width:300px;border:0.5px solid var(--color-border-tertiary)}
-.modal h2{font-size:16px;font-weight:500;margin-bottom:1rem;color:var(--color-text-primary)}
-.modal input{width:100%;padding:8px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-primary);color:var(--color-text-primary);margin-bottom:.75rem}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end}
-.modal-btns button{padding:7px 16px;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer}
-.btn-cancel{background:none;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
-.btn-add{background:#D85A30;border:none;color:white}
 .empty-state{padding:.5rem 0;color:var(--color-text-secondary);font-size:13px}
+.loading{opacity:.5;pointer-events:none}
 </style>
 </head>
 <body>
 
-<h1 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Wood Spike — SpikeBall scheduling app for 4 players</h1>
-
 <div class="hdr">
   <div class="logo" aria-hidden="true">🏐</div>
   <div class="hdr-text">
-    <h1>Wood Spike</h1>
+    <h1>Wood Spike <span class="sync-dot" id="sync-dot" title="Sync status"></span></h1>
     <p>Find when all 4 of you can play</p>
   </div>
 </div>
 
-<div class="switch-row">
-  <span style="font-size:12px;color:var(--color-text-secondary)">Viewing as:</span>
-  <button class="switch-btn active" id="btn-0" onclick="switchPlayer(0)">Player 1</button>
-  <button class="switch-btn" id="btn-1" onclick="switchPlayer(1)">Player 2</button>
-  <button class="switch-btn" id="btn-2" onclick="switchPlayer(2)">Player 3</button>
-  <button class="switch-btn" id="btn-3" onclick="switchPlayer(3)">Player 4</button>
+<div class="name-prompt" id="name-prompt">
+  <p>Who are you? Enter your name to get started.</p>
+  <input type="text" id="name-input" placeholder="Your name" maxlength="20" />
+  <button onclick="setMyName()">Let's go</button>
 </div>
 
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#D85A30"></div>Your pick</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#FAECE7;border:0.5px solid #F5C4B3"></div>Busy</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#993C1D"></div>Locked in (4/4)</div>
-</div>
+<div id="app" class="loading">
 
-<p class="hint"><i class="ti ti-mouse" aria-hidden="true"></i> Click or click-and-drag to mark availability</p>
-
-<div class="week-nav">
-  <button onclick="shiftWeek(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
-  <span class="week-label" id="week-label"></span>
-  <button onclick="shiftWeek(1)"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
-</div>
-
-<div class="grid" id="grid"></div>
-
-<div class="players">
-  <h2>Players</h2>
-  <div class="player-grid" id="player-grid"></div>
-</div>
-
-<div class="status-bar">
-  <h2>Best times this week</h2>
-  <div id="matches"></div>
-  <button class="nag-btn" id="nag-btn" onclick="copyNag()"><i class="ti ti-send" aria-hidden="true"></i> Copy nag message</button>
-</div>
-
-<div class="modal-bg" id="modal">
-  <div class="modal">
-    <h2>Add a player</h2>
-    <input type="text" id="new-name" placeholder="Name" maxlength="20" />
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-add" onclick="confirmAdd()">Add</button>
-    </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#D85A30"></div>Your pick</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#993C1D"></div>Locked in (4/4)</div>
   </div>
+
+  <p class="hint"><i class="ti ti-mouse" aria-hidden="true"></i> Click or click-and-drag to mark availability</p>
+
+  <div class="week-nav">
+    <button onclick="shiftWeek(-1)"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
+    <span class="week-label" id="week-label"></span>
+    <button onclick="shiftWeek(1)"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="players">
+    <h2>Players</h2>
+    <div class="player-grid" id="player-grid"></div>
+  </div>
+
+  <div class="status-bar">
+    <h2>Best times this week</h2>
+    <div id="matches"></div>
+    <button class="nag-btn" id="nag-btn" onclick="copyNag()">
+      <i class="ti ti-send" aria-hidden="true"></i> Copy nag message
+    </button>
+  </div>
+
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCZyPmwuFza-zuK7uMnjZNAEIogJ7Zab88",
+  authDomain: "wood-spike.firebaseapp.com",
+  databaseURL: "https://wood-spike-default-rtdb.firebaseio.com",
+  projectId: "wood-spike",
+  storageBucket: "wood-spike.firebasestorage.app",
+  messagingSenderId: "427231399942",
+  appId: "1:427231399942:web:4e11cc226715a488583387",
+  measurementId: "G-MFN51MYQXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 const HOURS = [10,11,12,13,14,15,16,17];
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const COLORS = ['#B5D4F4','#9FE1CB','#FAC775','#F4C0D1'];
-const TEXT_COLORS = ['#0C447C','#085041','#633806','#72243E'];
+const COLORS = ['#B5D4F4','#9FE1CB','#FAC775','#F4C0D1','#EEEDFE','#E1F5EE'];
+const TEXT_COLORS = ['#0C447C','#085041','#633806','#72243E','#3C3489','#0F6E56'];
 
 let weekOffset = 0;
-let currentPlayerIdx = 0;
+let myName = localStorage.getItem('woodspike_name') || null;
+let allSelections = {};
 let dragState = null;
+let syncDot = document.getElementById('sync-dot');
 
-let players = [
-  {name:'Player 1', color:COLORS[0], textColor:TEXT_COLORS[0], selections:{}, busy:{}},
-  {name:'Player 2', color:COLORS[1], textColor:TEXT_COLORS[1], selections:{}, busy:{}},
-  {name:'Player 3', color:COLORS[2], textColor:TEXT_COLORS[2], selections:{}, busy:{}},
-  {name:'Player 4', color:COLORS[3], textColor:TEXT_COLORS[3], selections:{}, busy:{}}
-];
+function setSyncing(){ syncDot.className='sync-dot syncing'; }
+function setSynced(){ syncDot.className='sync-dot synced'; }
+
+function slotKey(d,h){ return d+'_'+h; }
 
 function getWeekStart(){
   const d=new Date(); d.setHours(0,0,0,0);
@@ -182,32 +182,60 @@ function getWeekStart(){
   return d;
 }
 
-function slotKey(d,h){ return d+'_'+h; }
+function weekKey(){
+  const ws=getWeekStart();
+  return ws.toISOString().slice(0,10);
+}
 
-function isPlayerBusy(pi,d,h){
-  const ranges=(players[pi].busy[d])||[];
-  return ranges.some(([s,e])=>h>=s&&h<e);
+function getPlayers(){
+  const names={};
+  Object.entries(allSelections).forEach(([name,slots])=>{
+    if(slots&&typeof slots==='object') names[name]=slots;
+  });
+  return names;
 }
 
 function countPlayers(d,h){
   const key=slotKey(d,h);
-  return players.filter(p=>p.selections[key]).length;
+  return Object.values(getPlayers()).filter(slots=>slots[key]).length;
 }
 
 function isLocked(d,h){ return countPlayers(d,h)>=4; }
 
-function canToggle(pi,d,h){
-  if(isPlayerBusy(pi,d,h)) return false;
-  const key=slotKey(d,h);
-  if(isLocked(d,h)&&!players[pi].selections[key]) return false;
-  return true;
+function isMySlot(d,h){
+  if(!myName) return false;
+  const slots=allSelections[myName]||{};
+  return !!slots[slotKey(d,h)];
 }
 
-function setSlot(pi,d,h,val){
-  if(!canToggle(pi,d,h)) return;
+function toggleSlot(d,h){
+  if(!myName) return;
   const key=slotKey(d,h);
-  if(val) players[pi].selections[key]=true;
-  else delete players[pi].selections[key];
+  const cur=isMySlot(d,h);
+  if(isLocked(d,h)&&!cur) return;
+  const newVal=!cur;
+  if(!allSelections[myName]) allSelections[myName]={};
+  if(newVal) allSelections[myName][key]=true;
+  else delete allSelections[myName][key];
+  render();
+  setSyncing();
+  const dbRef=ref(db,'weeks/'+weekKey()+'/players/'+myName);
+  set(dbRef, allSelections[myName]||{}).then(setSynced).catch(()=>setSynced());
+}
+
+function setSlotValue(d,h,val){
+  if(!myName) return;
+  const key=slotKey(d,h);
+  const cur=isMySlot(d,h);
+  if(isLocked(d,h)&&!cur&&val) return;
+  if(cur===val) return;
+  if(!allSelections[myName]) allSelections[myName]={};
+  if(val) allSelections[myName][key]=true;
+  else delete allSelections[myName][key];
+  render();
+  setSyncing();
+  const dbRef=ref(db,'weeks/'+weekKey()+'/players/'+myName);
+  set(dbRef, allSelections[myName]||{}).then(setSynced).catch(()=>setSynced());
 }
 
 function render(){
@@ -221,12 +249,10 @@ function render(){
   const g=document.getElementById('grid'); g.innerHTML='';
 
   const corner=document.createElement('div'); corner.className='corner'; g.appendChild(corner);
-
   for(let d=0;d<7;d++){
     const dt=new Date(ws); dt.setDate(dt.getDate()+d);
-    const isToday=dt.getTime()===today.getTime();
     const hdr=document.createElement('div');
-    hdr.className='day-hdr'+(isToday?' today':'');
+    hdr.className='day-hdr'+(dt.getTime()===today.getTime()?' today':'');
     hdr.innerHTML=`<div class="dow">${DAYS[d]}</div><div class="date">${dt.getDate()}</div>`;
     g.appendChild(hdr);
   }
@@ -237,32 +263,24 @@ function render(){
     g.appendChild(tc);
 
     for(let d=0;d<7;d++){
-      const key=slotKey(d,hour);
-      const busy=isPlayerBusy(currentPlayerIdx,d,hour);
       const locked=isLocked(d,hour);
-      const selected=!!players[currentPlayerIdx].selections[key];
+      const mine=isMySlot(d,hour);
       const cnt=countPlayers(d,hour);
-
       const slot=document.createElement('div');
-      slot.className='slot '+(locked&&!selected?'locked':busy?'busy':selected?'selected':'free');
+      slot.className='slot '+(locked&&!mine?'locked':mine?'selected':'free');
       slot.dataset.day=d; slot.dataset.hour=hour;
 
-      if(busy){
-        const lbl=document.createElement('div'); lbl.className='slot-label'; lbl.textContent='busy'; slot.appendChild(lbl);
-      } else if(locked&&!selected){
+      if(locked&&!mine){
         const lbl=document.createElement('div'); lbl.className='slot-label';
         lbl.innerHTML='<i class="ti ti-bolt" aria-hidden="true"></i>'; slot.appendChild(lbl);
-      } else if(selected){
+      } else if(mine){
         const ic=document.createElement('div'); ic.className='slot-label';
         ic.innerHTML='<i class="ti ti-check" aria-hidden="true"></i>'; slot.appendChild(ic);
-      }
-
-      if(cnt>0&&!locked&&!selected){
+      } else if(cnt>0){
         const badge=document.createElement('div'); badge.className='cnt-badge';
         badge.style.color=cnt>=3?'#D85A30':'var(--color-text-tertiary)';
         badge.textContent=cnt+'✓'; slot.appendChild(badge);
       }
-
       g.appendChild(slot);
     }
   });
@@ -274,38 +292,21 @@ function render(){
 
 function attachDragListeners(){
   const g=document.getElementById('grid');
-
-  function slotFromEl(el){
-    const s=el&&el.closest&&el.closest('.slot');
-    if(!s) return null;
-    return {el:s,day:+s.dataset.day,hour:+s.dataset.hour};
-  }
-
+  function slotFromEl(el){ const s=el&&el.closest&&el.closest('.slot'); return s?{day:+s.dataset.day,hour:+s.dataset.hour}:null; }
   function startDrag(e,slot){
-    if(!slot) return;
-    if(isPlayerBusy(currentPlayerIdx,slot.day,slot.hour)) return;
-    const key=slotKey(slot.day,slot.hour);
-    const wasSelected=!!players[currentPlayerIdx].selections[key];
-    dragState={painting:!wasSelected};
-    setSlot(currentPlayerIdx,slot.day,slot.hour,dragState.painting);
-    render();
+    if(!slot||!myName) return;
+    dragState={painting:!isMySlot(slot.day,slot.hour)};
+    setSlotValue(slot.day,slot.hour,dragState.painting);
   }
-
   function duringDrag(e){
     if(!dragState) return;
     let el;
     if(e.touches){ const t=e.touches[0]; el=document.elementFromPoint(t.clientX,t.clientY); e.preventDefault(); }
-    else { el=e.target; }
+    else el=e.target;
     const slot=slotFromEl(el); if(!slot) return;
-    const key=slotKey(slot.day,slot.hour);
-    const cur=!!players[currentPlayerIdx].selections[key];
-    if(cur===dragState.painting) return;
-    setSlot(currentPlayerIdx,slot.day,slot.hour,dragState.painting);
-    render();
+    setSlotValue(slot.day,slot.hour,dragState.painting);
   }
-
   function endDrag(){ dragState=null; }
-
   g.addEventListener('mousedown',e=>{ if(e.button!==0) return; startDrag(e,slotFromEl(e.target)); });
   g.addEventListener('mouseover',duringDrag);
   g.addEventListener('mouseup',endDrag);
@@ -317,14 +318,21 @@ function attachDragListeners(){
 
 function renderPlayers(){
   const pg=document.getElementById('player-grid'); pg.innerHTML='';
-  players.forEach((p,i)=>{
-    const cnt=Object.keys(p.selections).length;
+  const players=getPlayers();
+  let i=0;
+  Object.entries(players).forEach(([name,slots])=>{
+    const cnt=Object.keys(slots).length;
+    const color=COLORS[i%COLORS.length];
+    const textColor=TEXT_COLORS[i%TEXT_COLORS.length];
     const card=document.createElement('div');
-    card.className='player-card'+(i===currentPlayerIdx?' me':'');
-    card.innerHTML=`<div class="avatar" style="background:${p.color};color:${p.textColor}">${p.name.charAt(0)}</div>
-      <div class="player-info"><div class="name">${p.name}</div><div class="slots-count">${cnt} slot${cnt!==1?'s':''} picked</div></div>`;
-    pg.appendChild(card);
+    card.className='player-card'+(name===myName?' me':'');
+    card.innerHTML=`<div class="avatar" style="background:${color};color:${textColor}">${name.charAt(0).toUpperCase()}</div>
+      <div class="player-info"><div class="name">${name}${name===myName?' (you)':''}</div><div class="slots-count">${cnt} slot${cnt!==1?'s':''} picked</div></div>`;
+    pg.appendChild(card); i++;
   });
+  if(Object.keys(players).length===0){
+    pg.innerHTML='<div class="empty-state">No one has picked slots yet — you go first!</div>';
+  }
 }
 
 function renderMatches(){
@@ -337,7 +345,7 @@ function renderMatches(){
       const dt=new Date(ws); dt.setDate(dt.getDate()+d);
       const label=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
       const timeStr=h===12?'12:00 pm':h<12?`${h}:00 am`:`${h-12}:00 pm`;
-      const who=players.filter(p=>p.selections[slotKey(d,h)]).map(p=>p.name).join(', ');
+      const who=Object.entries(getPlayers()).filter(([,slots])=>slots[slotKey(d,h)]).map(([n])=>n===myName?'you':n).join(', ');
       all.push({label,timeStr,cnt,who,sort:cnt>=4?0:cnt===3?1:2});
     }
   });
@@ -349,40 +357,52 @@ function renderMatches(){
   </div>`).join('');
 }
 
-function switchPlayer(idx){
-  currentPlayerIdx=idx;
-  for(let i=0;i<4;i++) document.getElementById('btn-'+i).classList.toggle('active',i===idx);
-  render();
+function loadWeek(){
+  document.getElementById('app').classList.add('loading');
+  const dbRef=ref(db,'weeks/'+weekKey()+'/players');
+  onValue(dbRef, snap=>{
+    allSelections=snap.val()||{};
+    document.getElementById('app').classList.remove('loading');
+    setSynced();
+    render();
+  });
 }
 
-function shiftWeek(n){ weekOffset+=n; render(); }
+function shiftWeek(n){ weekOffset+=n; loadWeek(); }
 
-function openModal(){ document.getElementById('modal').classList.add('open'); document.getElementById('new-name').focus(); }
-function closeModal(){ document.getElementById('modal').classList.remove('open'); document.getElementById('new-name').value=''; }
-function confirmAdd(){
-  const name=document.getElementById('new-name').value.trim(); if(!name) return;
-  players[currentPlayerIdx].name=name;
-  document.getElementById('btn-'+currentPlayerIdx).textContent=name;
-  closeModal(); render();
-}
+window.setMyName=function(){
+  const val=document.getElementById('name-input').value.trim();
+  if(!val) return;
+  myName=val;
+  localStorage.setItem('woodspike_name',myName);
+  document.getElementById('name-prompt').style.display='none';
+  loadWeek();
+};
 
-function copyNag(){
+window.shiftWeek=shiftWeek;
+
+window.copyNag=function(){
   const ws=getWeekStart();
   const slots3=[];
   for(let d=0;d<7;d++) HOURS.forEach(h=>{ if(countPlayers(d,h)===3){ const dt=new Date(ws); dt.setDate(dt.getDate()+d); slots3.push(dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' at '+(h===12?'12:00 pm':h<12?`${h}:00 am`:`${h-12}:00 pm`)); } });
+  const url=window.location.href;
   const msg=slots3.length>0
-    ?`YO we have 3/4 confirmed for SpikeBall on Wood Spike — we just need ONE more to lock it in! 🏐\n\nTimes that work for 3 of us:\n${slots3.slice(0,3).map(s=>'• '+s).join('\n')}\n\nPick your slots or you're carrying the net: [your Wood Spike link]`
-    :`SPIKEBALL SCHEDULING IS HAPPENING AND YOU NEED TO PARTICIPATE 🏐\n\nI built an entire app called Wood Spike because our group chat is a disaster.\n\nTakes 30 seconds. Click your free times. Do it:\n[your Wood Spike link]\n\nYou have 24 hours before I make unilateral decisions.`;
+    ?`YO we have 3/4 confirmed for SpikeBall on Wood Spike — we just need ONE more to lock it in! 🏐\n\nTimes that work for 3 of us:\n${slots3.slice(0,3).map(s=>'• '+s).join('\n')}\n\nPick your slots or you're carrying the net:\n${url}`
+    :`SPIKEBALL SCHEDULING IS HAPPENING AND YOU NEED TO PARTICIPATE 🏐\n\nI built an entire app called Wood Spike because our group chat is a disaster.\n\nTakes 30 seconds. Click your free times:\n${url}\n\nYou have 24 hours before I make unilateral decisions.`;
   navigator.clipboard.writeText(msg).then(()=>{
     const btn=document.getElementById('nag-btn');
-    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    btn.innerHTML='<i class="ti ti-check" aria-hidden="true"></i> Copied!';
+    btn.classList.add('copied');
     setTimeout(()=>{ btn.innerHTML='<i class="ti ti-send" aria-hidden="true"></i> Copy nag message'; btn.classList.remove('copied'); },2000);
   }).catch(()=>alert(msg));
-}
+};
 
-render();
-document.addEventListener('mouseup',()=>{ dragState=null; });
-document.getElementById('new-name').addEventListener('keydown',e=>{ if(e.key==='Enter') confirmAdd(); if(e.key==='Escape') closeModal(); });
+if(myName){
+  document.getElementById('name-prompt').style.display='none';
+  loadWeek();
+} else {
+  document.getElementById('name-input').addEventListener('keydown',e=>{ if(e.key==='Enter') setMyName(); });
+}
 </script>
 </body>
 </html>
